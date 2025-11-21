@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **Retro Box — MVP**
 
-## Getting Started
+Retro Box is a lightweight retrospective tool that helps product and engineering teams collect notes during the sprint and review them together at the end of the cycle. It keeps feedback organized, reduces meeting overhead, and builds stronger team awareness over time.
 
-First, run the development server:
+---
+
+## 🚀 **Features**
+
+* **Team Spaces** — each team gets its own Retro Box.
+* **Contributor Role by Default** — new users can add notes immediately.
+* **Add Notes Anytime** — during the sprint or within a defined time window.
+* **Retro Categories** — "Went Well", "Didn't Go Well", "Ideas", and more (configurable).
+* **Auto-Categorization (Optional)** — uses OpenAI to group notes or clean duplicates.
+* **Review View** — clean UI for reading, grouping, and discussing notes.
+* **History** — see past retros for context and progress (MVP-basic).
+
+---
+
+## 🧱 **Tech Stack**
+
+### **Frontend**
+
+* Next.js (App Router)
+* TypeScript
+* TailwindCSS + ShadCN UI
+* Zustand (minimal state)
+* API Routes for backend logic
+* Optional realtime via Liveblocks or Supabase Realtime
+
+### **Backend**
+
+* Supabase (Auth, Database, RLS)
+* Postgres for storing teams, users, and notes
+* Optional: Supabase Edge Functions for scheduled jobs
+
+### **AI**
+
+* OpenAI GPT-4 Mini or GPT-4o Mini for note categorization
+
+---
+
+## 📦 **Local Development**
 
 ```bash
+git clone <repo-url>
+cd retro-box
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Environment variables required:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+OPENAI_API_KEY=
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📂 **Project Structure**
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  (routes)
+  store/
+  api/
+  types/
+  styles/
+components/
+lib/
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📄 **License**
 
-## Deploy on Vercel
+MIT License.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
