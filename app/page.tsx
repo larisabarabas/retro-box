@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,11 +28,7 @@ export default function Home() {
           </div>
         </header>
         <div>
-          <Button
-            className="mb-2"
-            variant="default"
-            onClick={() => console.log("AAAAA")}
-          >
+          <Button className="mb-2" variant="default">
             Text
           </Button>
           <Dialog>
