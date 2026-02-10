@@ -14,6 +14,100 @@ export type Database = {
   };
   public: {
     Tables: {
+      notes: {
+        Row: {
+          author_name: string;
+          author_slack_id: string | null;
+          content: string;
+          created_at: string | null;
+          id: string;
+          source: string | null;
+          sprint_number: number | null;
+          team_id: string | null;
+        };
+        Insert: {
+          author_name: string;
+          author_slack_id?: string | null;
+          content: string;
+          created_at?: string | null;
+          id?: string;
+          source?: string | null;
+          sprint_number?: number | null;
+          team_id?: string | null;
+        };
+        Update: {
+          author_name?: string;
+          author_slack_id?: string | null;
+          content?: string;
+          created_at?: string | null;
+          id?: string;
+          source?: string | null;
+          sprint_number?: number | null;
+          team_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notes_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      syntheses: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          raw_output: string;
+          sprint_number: number;
+          team_id: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          raw_output: string;
+          sprint_number: number;
+          team_id?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          raw_output?: string;
+          sprint_number?: number;
+          team_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "syntheses_team_id_fkey";
+            columns: ["team_id"];
+            isOneToOne: false;
+            referencedRelation: "teams";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      teams: {
+        Row: {
+          created_at: string | null;
+          id: string;
+          name: string;
+          slack_team_id: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string;
+          name: string;
+          slack_team_id?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string;
+          name?: string;
+          slack_team_id?: string | null;
+        };
+        Relationships: [];
+      };
       test_connection: {
         Row: {
           created_at: string;
