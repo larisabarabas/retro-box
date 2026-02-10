@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { generateSynthesis } from "@/lib/antrophic/antrophic";
+import { getErrorMessage } from "@/lib/utils";
 
 export async function GET(request: Request) {
   try {
@@ -22,8 +23,8 @@ export async function GET(request: Request) {
     if (error) throw error;
 
     return NextResponse.json(data);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
   }
 }
 
@@ -72,8 +73,8 @@ export async function POST(request: Request) {
     if (synthesisError) throw synthesisError;
 
     return NextResponse.json(synthesis);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Synthesis error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: getErrorMessage(error) }, { status: 500 });
   }
 }

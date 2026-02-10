@@ -5,6 +5,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getErrorMessage } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -37,7 +38,7 @@ export default function SynthesisPage() {
       if (Array.isArray(data)) {
         setSyntheses(data);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to fetch syntheses:", err);
     } finally {
       setFetching(false);
@@ -62,8 +63,8 @@ export default function SynthesisPage() {
       }
 
       setSyntheses((prev) => [data, ...prev]);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
