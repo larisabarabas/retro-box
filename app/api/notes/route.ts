@@ -28,3 +28,39 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    // TODO: To be removed later - '00000000-0000-0000-0000-000000000001' - this is just a fallback
+    const team_id = body.team_id || "00000000-0000-0000-0000-000000000001";
+    const { content, author_name, sprint_number = 1, source = "web" } = body;
+
+    if (!content || !author_name) {
+      return NextResponse.json(
+        { error: "content and author_name required" },
+        { status: 400 },
+      );
+    }
+
+    const supabase = await supabaseServerClient();
+
+    const { data, error } = await supabase
+      .from("notes")
+      .insert({
+        team_id,
+        content,
+        author_name,
+        sprint_number,
+        source,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json(data);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
