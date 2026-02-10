@@ -14,3 +14,12 @@ export function getErrorMessage(error: unknown): string {
   }
   return "An unexpected error occurred";
 }
+
+export async function fetcher<T>(url: string): Promise<T> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || "Failed to fetch");
+  }
+  return res.json();
+}

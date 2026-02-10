@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState } from "react";
+import useSWR from "swr";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/ui/back-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { fetcher } from "@/lib/utils";
 import {
   Card,
   CardContent,
@@ -22,24 +25,18 @@ interface Note {
 }
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const {
+    data: notes,
+    isLoading,
+    mutate,
+  } = useSWR<Note[]>("/api/notes?sprint_number=1", fetcher);
   const [content, setContent] = useState("");
   const [authorName, setAuthorName] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchNotes();
-  }, []);
-
-  async function fetchNotes() {
-    const res = await fetch("/api/notes?sprint_number=1");
-    const data = await res.json();
-    setNotes(data);
-  }
+  const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       const res = await fetch("/api/notes", {
@@ -54,24 +51,18 @@ export default function NotesPage() {
 
       if (res.ok) {
         setContent("");
-        fetchNotes();
+        mutate();
       }
     } catch (error) {
       console.error("Error adding note:", error);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
   return (
     <div className="container mx-auto p-8 max-w-4xl">
-      <div className="mb-6">
-        <Link href="/">
-          <Button variant="ghost" size="sm">
-            &larr; Back
-          </Button>
-        </Link>
-      </div>
+      <BackButton />
 
       <h1 className="text-3xl font-bold mb-8">Sprint 1 Notes</h1>
 
@@ -106,31 +97,41 @@ export default function NotesPage() {
               />
             </div>
 
-            <Button type="submit" disabled={loading}>
-              {loading ? "Adding..." : "Add Note"}
+            <Button type="submit" disabled={submitting}>
+              {submitting ? "Adding..." : "Add Note"}
             </Button>
           </form>
         </CardContent>
       </Card>
 
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">All Notes ({notes.length})</h2>
+        <h2 className="text-xl font-semibold">
+          All Notes {notes ? `(${notes.length})` : ""}
+        </h2>
 
-        {notes.map((note) => (
-          <Card key={note.id}>
-            <CardHeader>
-              <div className="flex justify-between items-start">
-                <CardTitle className="text-base">{note.author_name}</CardTitle>
-                <CardDescription>
-                  {new Date(note.created_at).toLocaleDateString()}
-                </CardDescription>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p>{note.content}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          notes?.map((note) => (
+            <Card key={note.id}>
+              <CardHeader>
+                <div className="flex justify-between items-start">
+                  <CardTitle className="text-base">
+                    {note.author_name}
+                  </CardTitle>
+                  <CardDescription>
+                    {new Date(note.created_at).toLocaleDateString()}
+                  </CardDescription>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p>{note.content}</p>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
     </div>
   );
