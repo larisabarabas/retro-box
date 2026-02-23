@@ -2,13 +2,20 @@ import { NextResponse } from "next/server";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { getErrorMessage } from "@/lib/utils";
 
+const defaultTeamId = process.env.NEXT_PUBLIC_DEFAULT_TEAM_ID;
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    // TODO: To be removed later - '00000000-0000-0000-0000-000000000001' - this is just a fallback
-    const teamId =
-      searchParams.get("team_id") || "00000000-0000-0000-0000-000000000001";
+    const teamId = searchParams.get("team_id") || defaultTeamId;
     const sprintNumber = searchParams.get("sprint_number");
+
+    if (!teamId) {
+      return NextResponse.json(
+        { error: "Missing team_id and NEXT_PUBLIC_DEFAULT_TEAM_ID" },
+        { status: 500 },
+      );
+    }
 
     const supabase = await supabaseServerClient();
     const {
@@ -44,9 +51,15 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    // TODO: To be removed later - '00000000-0000-0000-0000-000000000001' - this is just a fallback
-    const team_id = body.team_id || "00000000-0000-0000-0000-000000000001";
+    const team_id = body.team_id || defaultTeamId;
     const { content, author_name, sprint_number = 1, source = "web" } = body;
+
+    if (!team_id) {
+      return NextResponse.json(
+        { error: "Missing team_id and NEXT_PUBLIC_DEFAULT_TEAM_ID" },
+        { status: 500 },
+      );
+    }
 
     if (!content || !author_name) {
       return NextResponse.json(
