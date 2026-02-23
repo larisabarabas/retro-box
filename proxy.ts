@@ -33,6 +33,17 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
+  const hasAuthCallbackParams =
+    request.nextUrl.searchParams.has("code") ||
+    (request.nextUrl.searchParams.has("token_hash") &&
+      request.nextUrl.searchParams.has("type"));
+
+  // Fallback for misconfigured Site URL/email template links that land on /login.
+  if (pathname.startsWith("/login") && hasAuthCallbackParams) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
 
   // Unauthenticated users can only access /login and /auth/*
   if (
