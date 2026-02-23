@@ -11,6 +11,14 @@ export async function GET(request: Request) {
     const sprintNumber = searchParams.get("sprint_number");
 
     const supabase = await supabaseServerClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     let query = supabase
       .from("notes")
@@ -19,10 +27,10 @@ export async function GET(request: Request) {
       .order("created_at", { ascending: false });
 
     if (sprintNumber) {
-      query = query.eq("sprint_number", parseInt(sprintNumber));
+      query = query.eq("sprint_number", parseInt(sprintNumber, 10));
     }
 
-    const { data, error } = await query;
+    const { data } = await query;
 
     return NextResponse.json(data);
   } catch (error: unknown) {
@@ -48,6 +56,14 @@ export async function POST(request: Request) {
     }
 
     const supabase = await supabaseServerClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { data, error } = await supabase
       .from("notes")

@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
-import useSWR from "swr";
 import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
+import { useState } from "react";
+import useSWR from "swr";
 import { BackButton } from "@/components/ui/back-button";
-import { getErrorMessage, fetcher } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
+import { fetcher, getErrorMessage } from "@/lib/utils";
 
 const ReactMarkdown = dynamic(() => import("react-markdown"), {
   loading: () => (

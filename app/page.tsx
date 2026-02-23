@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,13 +8,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { supabaseServerClient } from "@/lib/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await supabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div className="container mx-auto p-8">
-      <h1 className="text-4xl font-bold mb-8">RetroBox</h1>
+      <h1 className="mb-8 text-4xl font-bold">RetroBox</h1>
 
-      <div className="grid gap-6 max-w-md">
+      <div className="grid max-w-md gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Sprint Notes</CardTitle>

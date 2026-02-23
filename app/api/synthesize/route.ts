@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { supabaseServerClient } from "@/lib/supabase/server";
 import { generateSynthesis } from "@/lib/antrophic/antrophic";
+import { supabaseServerClient } from "@/lib/supabase/server";
 import { getErrorMessage } from "@/lib/utils";
 
 export async function GET(request: Request) {
@@ -12,12 +12,20 @@ export async function GET(request: Request) {
     const sprint_number = searchParams.get("sprint_number") || "1";
 
     const supabase = await supabaseServerClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { data, error } = await supabase
       .from("syntheses")
       .select("*")
       .eq("team_id", team_id)
-      .eq("sprint_number", parseInt(sprint_number))
+      .eq("sprint_number", parseInt(sprint_number, 10))
       .order("created_at", { ascending: false });
 
     if (error) throw error;
@@ -39,6 +47,14 @@ export async function POST(request: Request) {
     const { sprint_number = 1 } = body;
 
     const supabase = await supabaseServerClient();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     // Fetch notes
 

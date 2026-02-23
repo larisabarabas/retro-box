@@ -1,20 +1,20 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import useSWR from "swr";
-import { Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { BackButton } from "@/components/ui/back-button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { fetcher } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { fetcher } from "@/lib/utils";
 
 interface Note {
   id: string;

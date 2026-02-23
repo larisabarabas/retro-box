@@ -23,7 +23,7 @@ export async function generateSynthesis(
       let date = "unknown-date";
       if (note.created_at) {
         const parsedDate = new Date(note.created_at);
-        if (!isNaN(parsedDate.getTime())) {
+        if (!Number.isNaN(parsedDate.getTime())) {
           date = parsedDate.toISOString().split("T")[0];
         }
       }
