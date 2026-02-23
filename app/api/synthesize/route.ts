@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { generateSynthesis } from "@/lib/antrophic/antrophic";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { getErrorMessage } from "@/lib/utils";
 
@@ -6,9 +7,9 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     // TODO: To be removed later - '00000000-0000-0000-0000-000000000001' - this is just a fallback
-    const teamId =
+    const team_id =
       searchParams.get("team_id") || "00000000-0000-0000-0000-000000000001";
-    const sprintNumber = searchParams.get("sprint_number");
+    const sprint_number = searchParams.get("sprint_number") || "1";
 
     const supabase = await supabaseServerClient();
     const {
@@ -20,17 +21,14 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let query = supabase
-      .from("notes")
+    const { data, error } = await supabase
+      .from("syntheses")
       .select("*")
-      .eq("team_id", teamId)
+      .eq("team_id", team_id)
+      .eq("sprint_number", parseInt(sprint_number, 10))
       .order("created_at", { ascending: false });
 
-    if (sprintNumber) {
-      query = query.eq("sprint_number", parseInt(sprintNumber, 10));
-    }
-
-    const { data } = await query;
+    if (error) throw error;
 
     return NextResponse.json(data);
   } catch (error: unknown) {
@@ -46,14 +44,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     // TODO: To be removed later - '00000000-0000-0000-0000-000000000001' - this is just a fallback
     const team_id = body.team_id || "00000000-0000-0000-0000-000000000001";
-    const { content, author_name, sprint_number = 1, source = "web" } = body;
-
-    if (!content || !author_name) {
-      return NextResponse.json(
-        { error: "content and author_name required" },
-        { status: 400 },
-      );
-    }
+    const { sprint_number = 1 } = body;
 
     const supabase = await supabaseServerClient();
     const {
@@ -65,22 +56,44 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { data, error } = await supabase
+    // Fetch notes
+
+    const { data: notes, error: notesError } = await supabase
       .from("notes")
+      .select("content, author_name, created_at")
+      .eq("team_id", team_id)
+      .eq("sprint_number", sprint_number)
+      .order("created_at", { ascending: true });
+
+    if (notesError) throw notesError;
+
+    if (!notes || notes.length === 0) {
+      return NextResponse.json(
+        { error: "No notes found for this sprint" },
+        { status: 400 },
+      );
+    }
+
+    // Create synthesis with Claude
+
+    const synthesisText = await generateSynthesis(notes, sprint_number);
+
+    // Save synthesis
+    const { data: synthesis, error: synthesisError } = await supabase
+      .from("syntheses")
       .insert({
         team_id,
-        content,
-        author_name,
         sprint_number,
-        source,
+        raw_output: synthesisText,
       })
       .select()
       .single();
 
-    if (error) throw error;
+    if (synthesisError) throw synthesisError;
 
-    return NextResponse.json(data);
+    return NextResponse.json(synthesis);
   } catch (error: unknown) {
+    console.error("Synthesis error:", error);
     return NextResponse.json(
       { error: getErrorMessage(error) },
       { status: 500 },

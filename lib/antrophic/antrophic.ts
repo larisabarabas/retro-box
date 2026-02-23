@@ -7,7 +7,7 @@ const antrophic = new Anthropic({
 interface Note {
   content: string;
   author_name: string;
-  created_at: string;
+  created_at: string | null;
 }
 
 export async function generateSynthesis(
@@ -20,10 +20,13 @@ export async function generateSynthesis(
 
   const notesText = notes
     .map((note) => {
-      const parsedDate = new Date(note.created_at);
-      const date = isNaN(parsedDate.getTime())
-        ? "unknown-date"
-        : parsedDate.toISOString().split("T")[0];
+      let date = "unknown-date";
+      if (note.created_at) {
+        const parsedDate = new Date(note.created_at);
+        if (!Number.isNaN(parsedDate.getTime())) {
+          date = parsedDate.toISOString().split("T")[0];
+        }
+      }
       return `[${date}] ${note.author_name}: ${note.content}`;
     })
     .join("\n");
