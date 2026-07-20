@@ -4,7 +4,7 @@ Retro Box is a lightweight retrospective tool that helps product and engineering
 
 ---
 
-## 🚀 **Features**
+## **Features**
 
 * **Team Spaces** — each team gets its own Retro Box.
 * **Contributor Role by Default** — new users can add notes immediately.
@@ -16,7 +16,7 @@ Retro Box is a lightweight retrospective tool that helps product and engineering
 
 ---
 
-## 🧱 **Tech Stack**
+## **Tech Stack**
 
 ### **Frontend**
 
@@ -39,7 +39,7 @@ Retro Box is a lightweight retrospective tool that helps product and engineering
 
 ---
 
-## 📦 **Local Development**
+## **Local Development**
 
 ```bash
 git clone <repo-url>
@@ -58,7 +58,7 @@ OPENAI_API_KEY=
 
 ---
 
-## 📂 **Project Structure**
+## **Project Structure**
 
 ```
 app/
@@ -70,11 +70,5 @@ app/
 components/
 lib/
 ```
-
----
-
-## 📄 **License**
-
-MIT License.
 
 ---
