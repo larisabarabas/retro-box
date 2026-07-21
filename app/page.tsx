@@ -24,8 +24,8 @@ export default async function Home() {
     <div className="container mx-auto p-8">
       <h1 className="mb-8 text-4xl font-bold">RetroBox</h1>
 
-      <div className="grid max-w-md gap-6">
-        <Card>
+      <div className="flex flex-row max-w-[42rem] gap-6">
+        <Card className="flex-1">
           <CardHeader>
             <CardTitle>Sprint Notes</CardTitle>
             <CardDescription>
@@ -41,7 +41,7 @@ export default async function Home() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="flex-1">
           <CardHeader>
             <CardTitle>AI Synthesis</CardTitle>
             <CardDescription>
@@ -51,7 +51,7 @@ export default async function Home() {
           <CardContent>
             <Link href="/synthesis">
               <Button className="w-full" size="lg" variant="outline">
-                Generate Synthesis
+                See AI Synthesis
               </Button>
             </Link>
           </CardContent>
